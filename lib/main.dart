@@ -1,5 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'services/ping_service.dart';
+import 'state/tabs.dart';
+import 'widgets/app_scaffold.dart';
+import 'pages/traceroute_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,70 +28,22 @@ class NoctoolfApp extends StatelessWidget {
           path: '/ping',
           builder: (context, state) => const PingPage(),
         ),
+        GoRoute(
+          path: '/traceroute',
+          builder: (context, state) => const TraceroutePage(),
+        ),
       ],
     );
 
-    return MaterialApp.router(
-      title: 'NOCTOOLF',
-      theme: ThemeData.light(useMaterial3: true),
-      darkTheme: ThemeData.dark(useMaterial3: true),
-      routerConfig: router,
-    );
-  }
-}
-
-class AppScaffold extends StatelessWidget {
-  final Widget child;
-  const AppScaffold({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('NOCTOOLF'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.dashboard_outlined),
-            tooltip: 'Dashboard',
-            onPressed: () => context.go('/dashboard'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.network_ping_outlined),
-            tooltip: 'Ping',
-            onPressed: () => context.go('/ping'),
-          ),
-        ],
-      ),
-      body: Row(
-        children: [
-          NavigationRail(
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                label: Text('Dashboard'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.network_ping_outlined),
-                label: Text('Ping'),
-              ),
-            ],
-            selectedIndex: _selectedIndexForPath(GoRouterState.of(context).uri.toString()),
-            onDestinationSelected: (idx) {
-              if (idx == 0) context.go('/dashboard');
-              if (idx == 1) context.go('/ping');
-            },
-            labelType: NavigationRailLabelType.all,
-          ),
-          const VerticalDivider(width: 1),
-          Expanded(child: child),
-        ],
+    return ChangeNotifierProvider(
+      create: (_) => TabsController(),
+      child: MaterialApp.router(
+        title: 'NOCTOOLF',
+        theme: ThemeData.light(useMaterial3: true),
+        darkTheme: ThemeData.dark(useMaterial3: true),
+        routerConfig: router,
       ),
     );
-  }
-
-  int _selectedIndexForPath(String path) {
-    if (path.startsWith('/ping')) return 1;
-    return 0;
   }
 }
 
@@ -114,6 +72,41 @@ class _PingPageState extends State<PingPage> {
   bool running = false;
   final List<_PingRow> rows = [];
   int seq = 0;
+  StreamSubscription? sub;
+
+  @override
+  void dispose() {
+    sub?.cancel();
+    hostController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _start() async {
+    setState(() {
+      rows.clear();
+      running = true;
+      seq = 0;
+    });
+    // Use system ping via PingService
+    final host = hostController.text.trim();
+    if (host.isEmpty) return;
+    final svc = PingService();
+    final proc = await svc.start(host: host, count: 999999, interval: const Duration(seconds: 1), timeout: const Duration(seconds: 2));
+    sub = proc.stream.listen((u) {
+      setState(() {
+        seq = u.seq;
+        rows.add(_PingRow(seq: u.seq, timeMs: u.timeMs ?? 0, ttl: u.ttl, timestamp: u.timestamp));
+      });
+    });
+  }
+
+  Future<void> _stop() async {
+    setState(() {
+      running = false;
+    });
+    await sub?.cancel();
+    sub = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,38 +161,6 @@ class _PingPageState extends State<PingPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _start() async {
-    setState(() {
-      rows.clear();
-      running = true;
-      seq = 0;
-    });
-    // Temporary stub: simulate ping output every second.
-    _tick();
-  }
-
-  Future<void> _tick() async {
-    if (!running) return;
-    await Future<void>.delayed(const Duration(seconds: 1));
-    if (!mounted || !running) return;
-    setState(() {
-      seq += 1;
-      rows.add(_PingRow(
-        seq: seq,
-        timeMs: 10 + (seq % 20).toDouble(),
-        ttl: 64,
-        timestamp: DateTime.now(),
-      ));
-    });
-    _tick();
-  }
-
-  Future<void> _stop() async {
-    setState(() {
-      running = false;
-    });
   }
 }
 
