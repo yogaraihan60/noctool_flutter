@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../state/tabs.dart';
+import '../state/theme.dart';
 import 'tab_bar.dart';
 
 class NewTabIntent extends Intent {
@@ -89,6 +90,14 @@ class AppScaffold extends StatelessWidget {
               title: const Text('NOCTOOLF'),
               actions: [
                 IconButton(
+                  icon: const Icon(Icons.brightness_6_outlined),
+                  tooltip: 'Toggle theme',
+                  onPressed: () {
+                    final theme = context.read<ThemeController>();
+                    theme.toggle();
+                  },
+                ),
+                IconButton(
                   icon: const Icon(Icons.dashboard_outlined),
                   tooltip: 'Dashboard',
                   onPressed: () => context.go('/dashboard'),
@@ -151,23 +160,23 @@ class AppScaffold extends StatelessWidget {
                         onDestinationSelected: (idx) {
                           final tabs = context.read<TabsController>();
                           if (idx == 0) {
-                            final t = tabs.addTab('Dashboard', '/dashboard');
+                            final t = tabs.openOrActivate('Dashboard', '/dashboard');
                             context.go(t.route);
                           }
                           if (idx == 1) {
-                            final t = tabs.addTab('Ping', '/ping');
+                            final t = tabs.openOrActivate('Ping', '/ping');
                             context.go(t.route);
                           }
                           if (idx == 2) {
-                            final t = tabs.addTab('Traceroute', '/traceroute');
+                            final t = tabs.openOrActivate('Traceroute', '/traceroute');
                             context.go(t.route);
                           }
                           if (idx == 3) {
-                            final t = tabs.addTab('DNS Lookup', '/dns');
+                            final t = tabs.openOrActivate('DNS Lookup', '/dns');
                             context.go(t.route);
                           }
                           if (idx == 4) {
-                            final t = tabs.addTab('Port Scan', '/port-scan');
+                            final t = tabs.openOrActivate('Port Scan', '/port-scan');
                             context.go(t.route);
                           }
                         },

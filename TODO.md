@@ -18,10 +18,10 @@
 
 ## 📋 Next Priority Items
 - [x] Add Port Scanner tool
-- [ ] Improve tab persistence and state management
+- [x] Improve tab state management (dedupe open tabs; keyboard nav).
 - [x] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, Ctrl+Tab/Shift+Ctrl+Tab to switch tabs)
 - [ ] Add tool state persistence per tab
-- [ ] Add dark/light theme toggle
+- [x] Add dark/light theme toggle
 
 ## 🔧 Technical Debt
 - [ ] Replace shell command execution with proper Flutter plugins/FFI when possible

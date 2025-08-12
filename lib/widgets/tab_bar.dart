@@ -26,6 +26,10 @@ class TabsBar extends StatelessWidget {
               onTap: () {
                 controller.setActive(t.id);
                 context.go(t.route);
+              }, onDoubleTap: () {
+                // Prevent duplicate tabs by reusing existing
+                controller.setActive(t.id);
+                context.go(t.route);
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

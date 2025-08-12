@@ -42,6 +42,19 @@ class TabsController extends ChangeNotifier {
     return tab;
   }
 
+  TabItem openOrActivate(String title, String route) {
+    final existing = _tabs.firstWhere(
+      (t) => t.route == route,
+      orElse: () => TabItem(id: '', title: '', route: ''),
+    );
+    if (existing.id.isNotEmpty) {
+      _activeId = existing.id;
+      notifyListeners();
+      return existing;
+    }
+    return addTab(title, route);
+  }
+
   void closeTab(String id) {
     final idx = _tabs.indexWhere((t) => t.id == id);
     if (idx < 0) return;

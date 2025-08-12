@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'services/ping_service.dart';
 import 'state/tabs.dart';
 import 'widgets/app_scaffold.dart';
+import 'state/theme.dart';
 import 'pages/traceroute_page.dart';
 import 'pages/dns_lookup_page.dart';
 import 'pages/port_scan_page.dart';
@@ -45,13 +46,19 @@ class NoctoolfApp extends StatelessWidget {
       ],
     );
 
-    return ChangeNotifierProvider(
-      create: (_) => TabsController(),
-      child: MaterialApp.router(
-        title: 'NOCTOOLF',
-        theme: ThemeData.light(useMaterial3: true),
-        darkTheme: ThemeData.dark(useMaterial3: true),
-        routerConfig: router,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TabsController()),
+        ChangeNotifierProvider(create: (_) => ThemeController()),
+      ],
+      child: Consumer<ThemeController>(
+        builder: (context, theme, _) => MaterialApp.router(
+          title: 'NOCTOOLF',
+          themeMode: theme.mode,
+          theme: ThemeData.light(useMaterial3: true),
+          darkTheme: ThemeData.dark(useMaterial3: true),
+          routerConfig: router,
+        ),
       ),
     );
   }
