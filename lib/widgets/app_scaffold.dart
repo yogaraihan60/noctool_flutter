@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../state/tabs.dart';
 import '../state/tool_state.dart';
 import '../state/theme.dart';
+import '../state/tool_state.dart';
 import 'tab_bar.dart';
 
 class NewTabIntent extends Intent {
