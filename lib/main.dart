@@ -6,6 +6,7 @@ import 'services/ping_service.dart';
 import 'state/tabs.dart';
 import 'widgets/app_scaffold.dart';
 import 'pages/traceroute_page.dart';
+import 'pages/dns_lookup_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,10 @@ class NoctoolfApp extends StatelessWidget {
         GoRoute(
           path: '/traceroute',
           builder: (context, state) => const TraceroutePage(),
+        ),
+        GoRoute(
+          path: '/dns',
+          builder: (context, state) => const DnsLookupPage(),
         ),
       ],
     );
