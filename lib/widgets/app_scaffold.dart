@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../state/tabs.dart';
+import '../state/tool_state.dart';
 import '../state/theme.dart';
 import 'tab_bar.dart';
 
