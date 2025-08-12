@@ -55,6 +55,7 @@ class AppScaffold extends StatelessWidget {
                 final tabs = context.read<TabsController>();
                 final activeId = tabs.activeId;
                 if (activeId == null) return null;
+                context.read<ToolStateStore>().clearTab(activeId);
                 tabs.closeTab(activeId);
                 context.go(tabs.active?.route ?? '/dashboard');
                 return null;

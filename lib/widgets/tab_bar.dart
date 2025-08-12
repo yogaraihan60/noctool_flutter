@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../state/tabs.dart';
+import '../state/tool_state.dart';
 
 class TabsBar extends StatelessWidget {
   final TabsController controller;
@@ -54,6 +56,7 @@ class TabsBar extends StatelessWidget {
                     const SizedBox(width: 6),
                     GestureDetector(
                       onTap: () {
+                        context.read<ToolStateStore>().clearTab(t.id);
                         controller.closeTab(t.id);
                         context.go(controller.active?.route ?? '/dashboard');
                       },

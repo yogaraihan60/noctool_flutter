@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/port_scan_service.dart';
 import '../widgets/app_scaffold.dart';
+import '../state/tool_state.dart';
+import '../state/tabs.dart';
 
 class PortScanPage extends StatefulWidget {
   const PortScanPage({super.key});
@@ -20,6 +23,23 @@ class _PortScanPageState extends State<PortScanPage> {
   StreamSubscription<PortScanUpdate>? sub;
   PortScanProcess? procRef;
   final List<PortScanUpdate> results = <PortScanUpdate>[];
+
+  @override
+  void initState() {
+    super.initState();
+    final tabs = context.read<TabsController>();
+    final tabId = tabs.activeId;
+    if (tabId != null) {
+      final store = context.read<ToolStateStore>();
+      final saved = store.getState<PortScanTabState>(tabId, 'portscan');
+      if (saved != null) {
+        hostController.text = saved.host;
+        startPortController.text = saved.startPort.toString();
+        endPortController.text = saved.endPort.toString();
+        filterController.text = saved.filter;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -41,6 +61,8 @@ class _PortScanPageState extends State<PortScanPage> {
       results.clear();
       running = true;
     });
+
+    _persist();
 
     final svc = PortScanService();
     final proc = await svc.start(
@@ -76,6 +98,26 @@ class _PortScanPageState extends State<PortScanPage> {
     });
   }
 
+  void _persist() {
+    final tabs = context.read<TabsController>();
+    final tabId = tabs.activeId;
+    if (tabId == null) return;
+    final store = context.read<ToolStateStore>();
+    store.setState(
+      tabId,
+      'portscan',
+      PortScanTabState(
+        host: hostController.text.trim(),
+        startPort: int.tryParse(startPortController.text) ?? 1,
+        endPort: int.tryParse(endPortController.text) ?? 1024,
+        filter: filterController.text.trim(),
+        results: results
+            .map((e) => PortScanEntryState(port: e.port, isOpen: e.isOpen, serviceName: e.serviceName))
+            .toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final filter = filterController.text.trim().toLowerCase();
@@ -106,6 +148,7 @@ class _PortScanPageState extends State<PortScanPage> {
                       labelText: 'Host (e.g., 127.0.0.1)',
                       border: OutlineInputBorder(),
                     ),
+                    onChanged: (_) => _persist(),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -118,6 +161,7 @@ class _PortScanPageState extends State<PortScanPage> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (_) => _persist(),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -130,6 +174,7 @@ class _PortScanPageState extends State<PortScanPage> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (_) => _persist(),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -155,7 +200,10 @@ class _PortScanPageState extends State<PortScanPage> {
                       labelText: 'Filter (port or service)',
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) {
+                      setState(() {});
+                      _persist();
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),

@@ -6,6 +6,7 @@ import 'services/ping_service.dart';
 import 'state/tabs.dart';
 import 'widgets/app_scaffold.dart';
 import 'state/theme.dart';
+import 'state/tool_state.dart';
 import 'pages/traceroute_page.dart';
 import 'pages/dns_lookup_page.dart';
 import 'pages/port_scan_page.dart';
@@ -50,6 +51,7 @@ class NoctoolfApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => TabsController()),
         ChangeNotifierProvider(create: (_) => ThemeController()),
+        ChangeNotifierProvider(create: (_) => ToolStateStore()),
       ],
       child: Consumer<ThemeController>(
         builder: (context, theme, _) => MaterialApp.router(

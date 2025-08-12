@@ -20,7 +20,7 @@
 - [x] Add Port Scanner tool
 - [x] Improve tab state management (dedupe open tabs; keyboard nav).
 - [x] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, Ctrl+Tab/Shift+Ctrl+Tab to switch tabs)
-- [ ] Add tool state persistence per tab
+- [x] Add tool state persistence per tab
 - [x] Add dark/light theme toggle
 
 ## 🔧 Technical Debt
