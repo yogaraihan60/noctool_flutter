@@ -17,7 +17,7 @@
 - [ ] Implement persistent state (Hive/shared_preferences) once plugin constraint is resolved
 
 ## 📋 Next Priority Items
-- [ ] Add Port Scanner tool
+- [x] Add Port Scanner tool
 - [ ] Improve tab persistence and state management
 - [ ] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, etc.)
 - [ ] Add tool state persistence per tab

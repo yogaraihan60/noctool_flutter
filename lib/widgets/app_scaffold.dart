@@ -35,6 +35,11 @@ class AppScaffold extends StatelessWidget {
             tooltip: 'DNS Lookup',
             onPressed: () => context.go('/dns'),
           ),
+          IconButton(
+            icon: const Icon(Icons.shield_outlined),
+            tooltip: 'Port Scan',
+            onPressed: () => context.go('/port-scan'),
+          ),
         ],
       ),
       body: Column(
@@ -64,6 +69,10 @@ class AppScaffold extends StatelessWidget {
                       icon: Icon(Icons.dns_outlined),
                       label: Text('DNS Lookup'),
                     ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.shield_outlined),
+                      label: Text('Port Scan'),
+                    ),
                   ],
                   selectedIndex: _selectedIndexForPath(GoRouterState.of(context).uri.toString()),
                   onDestinationSelected: (idx) {
@@ -84,6 +93,10 @@ class AppScaffold extends StatelessWidget {
                       final t = tabs.addTab('DNS Lookup', '/dns');
                       context.go(t.route);
                     }
+                    if (idx == 4) {
+                      final t = tabs.addTab('Port Scan', '/port-scan');
+                      context.go(t.route);
+                    }
                   },
                   labelType: NavigationRailLabelType.all,
                 ),
@@ -101,6 +114,7 @@ class AppScaffold extends StatelessWidget {
     if (path.startsWith('/ping')) return 1;
     if (path.startsWith('/traceroute')) return 2;
     if (path.startsWith('/dns')) return 3;
+    if (path.startsWith('/port-scan')) return 4;
     return 0;
   }
 }

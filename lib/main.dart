@@ -7,6 +7,7 @@ import 'state/tabs.dart';
 import 'widgets/app_scaffold.dart';
 import 'pages/traceroute_page.dart';
 import 'pages/dns_lookup_page.dart';
+import 'pages/port_scan_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,10 @@ class NoctoolfApp extends StatelessWidget {
         GoRoute(
           path: '/dns',
           builder: (context, state) => const DnsLookupPage(),
+        ),
+        GoRoute(
+          path: '/port-scan',
+          builder: (context, state) => const PortScanPage(),
         ),
       ],
     );
