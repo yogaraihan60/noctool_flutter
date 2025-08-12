@@ -19,7 +19,7 @@
 ## 📋 Next Priority Items
 - [x] Add Port Scanner tool
 - [ ] Improve tab persistence and state management
-- [ ] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, etc.)
+- [x] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, Ctrl+Tab/Shift+Ctrl+Tab to switch tabs)
 - [ ] Add tool state persistence per tab
 - [ ] Add dark/light theme toggle
 
