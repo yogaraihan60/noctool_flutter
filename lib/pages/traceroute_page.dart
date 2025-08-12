@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/traceroute_service.dart';
 import '../widgets/app_scaffold.dart';
+import '../state/tool_state.dart';
+import '../state/tabs.dart';
 
 class TraceroutePage extends StatefulWidget {
   const TraceroutePage({super.key});
@@ -16,6 +19,22 @@ class _TraceroutePageState extends State<TraceroutePage> {
   bool running = false;
   final List<TracerouteHop> hops = [];
   StreamSubscription? sub;
+
+  @override
+  void initState() {
+    super.initState();
+    final tabs = context.read<TabsController>();
+    final tabId = tabs.activeId;
+    if (tabId != null) {
+      final store = context.read<ToolStateStore>();
+      final saved = store.getState<TracerouteTabState>(tabId, 'traceroute');
+      if (saved != null) {
+        hostController.text = saved.host;
+        maxHopsController.text = saved.maxHops.toString();
+        // Hops are not restored as they are transient results
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -35,6 +54,8 @@ class _TraceroutePageState extends State<TraceroutePage> {
       hops.clear();
       running = true;
     });
+
+    _persist();
 
     final svc = TracerouteService();
     final proc = await svc.start(
@@ -56,6 +77,22 @@ class _TraceroutePageState extends State<TraceroutePage> {
         }
       });
     });
+  }
+
+  void _persist() {
+    final tabs = context.read<TabsController>();
+    final tabId = tabs.activeId;
+    if (tabId == null) return;
+    final store = context.read<ToolStateStore>();
+    store.setState(
+      tabId,
+      'traceroute',
+      TracerouteTabState(
+        host: hostController.text.trim(),
+        maxHops: int.tryParse(maxHopsController.text) ?? 30,
+        hops: const [],
+      ),
+    );
   }
 
   Future<void> _stop() async {
@@ -94,6 +131,7 @@ class _TraceroutePageState extends State<TraceroutePage> {
                       labelText: 'Host (e.g., 8.8.8.8)',
                       border: OutlineInputBorder(),
                     ),
+                    onChanged: (_) => _persist(),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -106,6 +144,7 @@ class _TraceroutePageState extends State<TraceroutePage> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
+                    onChanged: (_) => _persist(),
                   ),
                 ),
                 const SizedBox(width: 16),

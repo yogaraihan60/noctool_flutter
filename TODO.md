@@ -17,11 +17,11 @@
 - [ ] Implement persistent state (Hive/shared_preferences) once plugin constraint is resolved
 
 ## 📋 Next Priority Items
-- [ ] Add Port Scanner tool
-- [ ] Improve tab persistence and state management
-- [ ] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, etc.)
-- [ ] Add tool state persistence per tab
-- [ ] Add dark/light theme toggle
+- [x] Add Port Scanner tool
+- [x] Improve tab state management (dedupe open tabs; keyboard nav).
+- [x] Add keyboard shortcuts (Ctrl+T for new tab, Ctrl+W to close, Ctrl+Tab/Shift+Ctrl+Tab to switch tabs)
+- [x] Add tool state persistence per tab
+- [x] Add dark/light theme toggle
 
 ## 🔧 Technical Debt
 - [ ] Replace shell command execution with proper Flutter plugins/FFI when possible
